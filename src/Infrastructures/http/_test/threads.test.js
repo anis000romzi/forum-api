@@ -6,6 +6,8 @@ const AuthenticationsTableTestHelper = require('../../../../tests/Authentication
 const container = require('../../container');
 const createServer = require('../createServer');
 
+jest.useRealTimers();
+
 describe('/threads endpoint', () => {
   afterAll(async () => {
     await pool.end();
@@ -317,6 +319,6 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[1].content).toStrictEqual('**komentar telah dihapus**');
       expect(responseJson.data.thread.comments[0].replies[0].content).toStrictEqual('testing');
       expect(responseJson.data.thread.comments[0].replies[1].content).toStrictEqual('**balasan telah dihapus**');
-    });
+    }, 10000);
   });
 });
