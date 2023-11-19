@@ -200,7 +200,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.message).toEqual('thread tidak ditemukan');
     });
 
-    it('should response 200 and display thread comments and replies correctly', async () => {
+    it('should response 200 and display thread correctly', async () => {
       // Arrange
       const server = await createServer(container);
 
@@ -304,6 +304,15 @@ describe('/threads endpoint', () => {
         },
       });
 
+      // like comment
+      await server.inject({
+        method: 'PUT',
+        url: `/threads/${addedThread.id}/comments/${addedComment1.id}/likes`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
       // Action
       const response = await server.inject({
         method: 'GET',
@@ -316,7 +325,9 @@ describe('/threads endpoint', () => {
       expect(responseJson.status).toEqual('success');
       expect(responseJson.data.thread).toBeDefined();
       expect(responseJson.data.thread.comments[0].content).toStrictEqual('testing');
+      expect(responseJson.data.thread.comments[0].likeCount).toStrictEqual(1);
       expect(responseJson.data.thread.comments[1].content).toStrictEqual('**komentar telah dihapus**');
+      expect(responseJson.data.thread.comments[1].likeCount).toStrictEqual(0);
       expect(responseJson.data.thread.comments[0].replies[0].content).toStrictEqual('testing');
       expect(responseJson.data.thread.comments[0].replies[1].content).toStrictEqual('**balasan telah dihapus**');
     }, 10000);
