@@ -9,14 +9,13 @@ class GetThreadDetailUseCase {
     const thread = await this._threadRepository.getThreadById(useCasePayload.threadId);
     const comments = await this._commentRepository.getCommentsByThreadId(useCasePayload.threadId);
     const mapppedComments = comments.map(this._changeDeletedComments);
-    let replies = [];
-    let mappedReplies = [];
 
     const commentsWithReplies = await Promise.all(mapppedComments.map(async ({
       id, username, date, content,
     }) => {
-      replies = await this._replyRepository.getRepliesByCommentId(id);
-      mappedReplies = replies.map(this._changeDeletedReplies);
+      const replies = await this._replyRepository.getRepliesByCommentId(id);
+      const mappedReplies = replies.map(this._changeDeletedReplies);
+      const likeCount = await this._commentRepository.getCommentLikes(id);
 
       return {
         id,
@@ -24,6 +23,7 @@ class GetThreadDetailUseCase {
         date,
         replies: mappedReplies,
         content,
+        likeCount,
       };
     }));
 

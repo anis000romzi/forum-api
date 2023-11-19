@@ -18,6 +18,8 @@ describe('GetThreadDetailUseCase', () => {
       .mockImplementation(() => Promise.resolve({}));
     mockCommentRepository.getCommentsByThreadId = jest.fn()
       .mockImplementation(() => Promise.resolve([{ id: 'comment-123' }]));
+    mockCommentRepository.getCommentLikes = jest.fn()
+      .mockImplementation(() => Promise.resolve(1));
     mockReplyRepository.getRepliesByCommentId = jest.fn()
       .mockImplementation(() => Promise.resolve([]));
 
@@ -35,6 +37,8 @@ describe('GetThreadDetailUseCase', () => {
       .toHaveBeenCalledWith(useCasePayload.threadId);
     expect(mockCommentRepository.getCommentsByThreadId)
       .toHaveBeenCalledWith(useCasePayload.threadId);
+    expect(mockCommentRepository.getCommentLikes)
+      .toHaveBeenCalledWith('comment-123');
     expect(mockReplyRepository.getRepliesByCommentId)
       .toHaveBeenCalledWith('comment-123');
   });
@@ -50,7 +54,7 @@ describe('GetThreadDetailUseCase', () => {
 
     mockThreadRepository.getThreadById = jest.fn()
       .mockImplementation(() => Promise.resolve({
-        id: 'thread-123',
+        id: 'thread-PJByal62zobLFhUggQo2m',
         title: 'sebuah thread',
         body: 'sebuah body thread',
         date: '2021-08-08T07:19:09.775Z',
@@ -73,6 +77,8 @@ describe('GetThreadDetailUseCase', () => {
           is_delete: false,
         },
       ]));
+    mockCommentRepository.getCommentLikes = jest.fn()
+      .mockImplementation(() => Promise.resolve(1));
     mockReplyRepository.getRepliesByCommentId = jest.fn()
       .mockImplementation(() => Promise.resolve([]));
 
@@ -87,7 +93,7 @@ describe('GetThreadDetailUseCase', () => {
 
     // Assert
     expect(threadDetail).toStrictEqual({
-      id: 'thread-123',
+      id: 'thread-PJByal62zobLFhUggQo2m',
       title: 'sebuah thread',
       body: 'sebuah body thread',
       date: '2021-08-08T07:19:09.775Z',
@@ -99,6 +105,7 @@ describe('GetThreadDetailUseCase', () => {
           date: '2021-08-08T07:22:33.555Z',
           replies: [],
           content: '**komentar telah dihapus**',
+          likeCount: 1,
         },
         {
           id: 'comment-yksuCoxM2s4MMrZJO-qVD',
@@ -106,6 +113,7 @@ describe('GetThreadDetailUseCase', () => {
           date: '2021-08-08T07:26:21.338Z',
           replies: [],
           content: 'sebuah comment',
+          likeCount: 1,
         },
       ],
     });
